@@ -1,12 +1,15 @@
 import os
 
 
+# CREATE DATABASE book_flask CHARACTER SET UTF8 collate utf8_general_ci
+
 class Config:
     CSRF_ENABLED = True
     SECRET = 'sadk&jhe@#2134dkl*/-*54dfewdv'
     TEMPLATE_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
     APP = None
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://user:passwd@host:3306/database'
 
 
 class DevelopmentConfig(Config):

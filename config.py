@@ -1,7 +1,6 @@
 import os
 
 
-# CREATE DATABASE book_flask CHARACTER SET UTF8 collate utf8_general_ci
 # mysql -u root -p -e "CREATE DATABASE bookflask CHARACTER SET UTF8 collate utf8_general_ci;"
 
 class Config:

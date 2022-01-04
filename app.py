@@ -1,7 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 from config import app_config, app_active
+from controller.user import UserController
 
 config = app_config[app_active]
 
@@ -24,29 +25,29 @@ def create_app(config_name):
     def login():
         return 'login'
 
+    @app.route('/login/', methods=['POST'])
+    def login_post():
+        user = UserController()
+        email = request.form['email']
+        password = request.form['password']
+        result = user.login(email=email, password=password)
+        if result:
+            return redirect('/admin')
+        else:
+            return render_template('login.html', data={'status': 401, 'msg': 'login invalid', 'type': None})
+
     @app.route('/recovery-password/')
     def recovery_password():
         return 'recovery password'
 
-    @app.route('/profile/<int:user_id>/action/<action>')
-    def profile(user_id, action):
-        if action == 'action1':
-            return f'Action1 for userId {user_id}'
-        elif action == 'action2':
-            return f'Action2 for userId {user_id}'
+    @app.route('/recovery-password/', methods=['POST'])
+    def send_recovery_password():
+        user = UserController()
+        result = user.recovery(email=request.form['email'])
+        if result:
+            return render_template('recovery.html', data={'status': 200, 'msg': 'Email sent successfully.'})
         else:
-            return f'Action default for userId {user_id}'
-
-    @app.route('/profile/', methods=['POST'])
-    def create_profile():
-        username = request.form['username']
-        password = request.form['password']
-        return f'POST - username: {username}, password: {password}'
-
-    @app.route('/profile/<int:user_id>', methods=['PUT'])
-    def edit_total_profile(user_id):
-        username = request.form['username']
-        password = request.form['password']
-        return f'PUT - username: {username}, password: {password}'
+            return render_template('recovery.html', data={'status': 401, 'msg': 'Error sending recovery password.',
+                                                          'type': None})
 
     return app

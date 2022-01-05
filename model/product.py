@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
 
 from config import app_config, app_active
 from model.category import Category
@@ -20,3 +21,5 @@ class Product(db.Model):
     status = db.Column(db.Boolean(), default=1, nullable=True)
     user_created = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
     category = db.Column(db.Integer, db.ForeignKey(Category.id), nullable=False)
+    user = relationship(User)
+    cat = relationship(Category)

@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
 
+from admin.admin import start_views
 from config import app_config, app_active
 from controller.user import UserController
 
@@ -15,6 +16,7 @@ def create_app(config_name):
     app.config['SQLALCHEMY_DATABASE_URI'] = config.SQLALCHEMY_DATABASE_URI
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db = SQLAlchemy(config.APP)
+    start_views(app, db)
     db.init_app(app)
 
     @app.route('/')

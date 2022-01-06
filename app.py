@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from admin.admin import start_views
 from config import app_config, app_active
+from controller.product import ProductController
 from controller.user import UserController
 
 config = app_config[app_active]
@@ -52,5 +53,11 @@ def create_app(config_name):
         else:
             return render_template('recovery.html', data={'status': 401, 'msg': 'Error sending recovery password.',
                                                           'type': None})
+
+    @app.route('/product', methods=['POST'])
+    def save_products():
+        product = ProductController()
+        result = product.save_product(request.form)
+        return 'Inserted' if result else 'Not inserted'
 
     return app

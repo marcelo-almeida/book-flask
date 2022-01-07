@@ -18,3 +18,7 @@ class ProductController:
         self.product_model.category = obj['category']
         self.product_model.user_created = obj['user_created']
         return self.product_model.save()
+
+    def update_product(self, obj):
+        self.product_model.id = obj['id']
+        return self.product_model.update(obj)

@@ -60,4 +60,10 @@ def create_app(config_name):
         result = product.save_product(request.form)
         return 'Inserted' if result else 'Not inserted'
 
+    @app.route('/product', methods=['PUT'])
+    def update_products():
+        product = ProductController()
+        result = product.update_product(request.form)
+        return 'Updated' if result else 'Not updated'
+
     return app

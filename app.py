@@ -1,4 +1,5 @@
 from flask import Flask, request, redirect, render_template
+from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 
 from admin.admin import start_views
@@ -19,6 +20,7 @@ def create_app(config_name):
     app.config['FLASK_ADMIN_SWATCH'] = 'Slate'
     db = SQLAlchemy(config.APP)
     start_views(app, db)
+    Bootstrap(app)
     db.init_app(app)
 
     @app.route('/')
@@ -27,7 +29,7 @@ def create_app(config_name):
 
     @app.route('/login/')
     def login():
-        return 'login'
+        return render_template('login.html')
 
     @app.route('/login/', methods=['POST'])
     def login_post():

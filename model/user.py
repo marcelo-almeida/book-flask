@@ -29,7 +29,14 @@ class User(db.Model):
         return ''
 
     def get_user_by_id(self):
-        return ''
+        try:
+            res = db.session.query(User).filter(User.id == self.id).first()
+        except Exception as e:
+            res = None
+            print(e)
+        finally:
+            db.session.close()
+            return res
 
     def update(self, obj):
         return ''

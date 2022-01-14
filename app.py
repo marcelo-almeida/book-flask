@@ -2,6 +2,7 @@ from functools import wraps
 
 from flask import Flask, request, redirect, render_template, Response, json, abort
 from flask_bootstrap import Bootstrap
+from flask_login import LoginManager, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 
 from admin.admin import start_views
@@ -14,6 +15,8 @@ config = app_config[app_active]
 
 def create_app(config_name):
     app = Flask(__name__, template_folder='templates')
+    login_manager = LoginManager()
+    login_manager.init_app(app)
     app.secret_key = config.SECRET
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
@@ -53,7 +56,7 @@ def create_app(config_name):
 
     @app.route('/login/')
     def login():
-        return render_template('login.html')
+        return render_template('login.html', data={'status': 200, 'msg': None, 'type': None})
 
     @app.route('/login/', methods=['POST'])
     def login_post():
@@ -62,9 +65,13 @@ def create_app(config_name):
         password = request.form['password']
         result = user.login(email=email, password=password)
         if result:
-            return redirect('/admin')
+            if result.role == 4:
+                return render_template('login.html', data={'status': 401, 'msg': 'permission denied', 'type': 2})
+            else:
+                login_user(result)
+                return redirect('/admin')
         else:
-            return render_template('login.html', data={'status': 401, 'msg': 'login invalid', 'type': None})
+            return render_template('login.html', data={'status': 401, 'msg': 'login invalid', 'type': 1})
 
     @app.route('/recovery-password/')
     def recovery_password():
@@ -158,5 +165,15 @@ def create_app(config_name):
                 response['message'] = 'login authorized'
                 response['result'] = result
         return Response(json.dumps(response, ensure_ascii=False), mimetype='application/json'), code, header
+
+    @app.route('/logout')
+    def logout_send():
+        logout_user()
+        return render_template('login.html', data={'status': 200, 'msg': 'Logout successfully', 'type': 3})
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        user = UserController()
+        return user.get_admin_login(user_id)
 
     return app

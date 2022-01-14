@@ -71,3 +71,8 @@ class UserController:
             'exp': date_time
         }
         return jwt.encode(dict_jwt, config.SECRET, algorithm='HS256')
+
+    def get_admin_login(self, user_id):
+        self.user_model.id = user_id
+        response = self.user_model.get_user_by_id()
+        return response
